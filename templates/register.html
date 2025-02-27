@@ -34,18 +34,29 @@
       <form action="{{ url_for('register.register') }}" method="POST">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" placeholder="Choose a username" required>
-        
+    
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+    
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" placeholder="Enter your address" required>
+    
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" placeholder="Create a password" required>
-        
+    
         <label for="captcha">Enter CAPTCHA:</label>
         <div class="captcha-box">
-          <img src="{{ url_for('captcha.get_captcha') }}" alt="CAPTCHA" class="captcha-image">
+            <img src="{{ url_for('captcha.get_captcha') }}" alt="CAPTCHA" class="captcha-image">
         </div>
         <input type="text" id="captcha" name="captcha" placeholder="Enter the text shown above" required>
-        
+    
+        <!-- ✅ Store CAPTCHA value from session (Flask backend) -->
+        <input type="hidden" name="captcha_value" value="{{ session['captcha_text'] }}">
+        <input type="text" name="honeypot"  tabindex="-1" autocomplete="off">
         <button type="submit">Register</button>
-      </form>
+    </form>
+    
+    
       <p>Already have an account? <a href="{{ url_for('login.login') }}">Login here</a>.</p>
     </section>
   </main>
