@@ -48,11 +48,13 @@
         <div class="captcha-box">
             <img src="{{ url_for('captcha.get_captcha') }}" alt="CAPTCHA" class="captcha-image">
         </div>
-        <input type="text" id="captcha" name="captcha" placeholder="Enter the text shown above" required>
+        <input type="text" id="captcha" name="captcha"  placeholder="Enter the text shown above" required>
     
         <!-- ✅ Store CAPTCHA value from session (Flask backend) -->
         <input type="hidden" name="captcha_value" value="{{ session['captcha_text'] }}">
-        <input type="text" name="honeypot"  tabindex="-1" autocomplete="off">
+        <input type="text" name="bot_field" placeholder="Type something"
+        style="opacity: 1; position: absolute; z-index:-1; ">
+ 
         <button type="submit">Register</button>
     </form>
     
