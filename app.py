@@ -11,6 +11,7 @@ from routes.admin import admin_bp, init_admin_db
 from routes.files import files_bp
 from routes.captcha import captcha_bp
 from routes.retirement import retirement_bp
+from routes.contact import contact_bp # Contact Us route
 from routes.news import news_bp  # Import the new news blueprint
 from models.user import User
 from models.note import Note
@@ -43,6 +44,7 @@ app.register_blueprint(files_bp)
 app.register_blueprint(captcha_bp)
 app.register_blueprint(news_bp)
 app.register_blueprint(retirement_bp)  
+app.register_blueprint(contact_bp)  
 
 def setup_database():
     """Setup database and print debug info"""
