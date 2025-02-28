@@ -112,7 +112,6 @@ def register():
         ])
 
         if honeypot_triggered:
-            print("\nRegistration DENIED - Unusual behavior detected")
             return redirect(url_for('home.home'))
 
         existing_user = User.query.filter_by(email=email).first()
