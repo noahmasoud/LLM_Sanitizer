@@ -1,7 +1,11 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, session, jsonify
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from models.user import User
-from extensions import db
+from extensions import db, mail
 from functools import wraps
+import secrets
+from datetime import datetime, timedelta
+from flask_mail import Message
+from flask import current_app
 
 register_bp = Blueprint("register", __name__)
 
@@ -25,7 +29,7 @@ class AdditionalField:
 
 
 ################################################################
-  # Debug function to print field statuses
+# Debug function to print field statuses
 ################################################################
 
 def debug_print_status(form_data, fields, bot_detected):
@@ -76,13 +80,14 @@ def register():
         form_data = request.form.to_dict()
 
         ################################################################
-        # validate additional profile fields
+        # validate additional profile fields (honeypot)
         ################################################################
-
         if validate_profile_data(form_data):
-            # Silently redirect to home
+            # Honeypot triggered - silently redirect to home
+            # We don't want to alert bots that we detected them
             return redirect(url_for("home.home"))
 
+        # If honeypot not triggered, proceed with normal registration
         username = request.form.get("username")
         password = request.form.get("password")
         email = request.form.get("email")
@@ -100,12 +105,63 @@ def register():
             flash("Username already exists. Please choose a different one.", "error")
             return redirect(url_for("register.register"))
 
-        new_user = User(username=username)
+        existing_email = User.query.filter_by(email=email).first()
+        if existing_email:
+            flash("Email already registered. Please log in.", "warning")
+            return redirect(url_for("login.login"))
+
+        # Create new user with unverified status
+        new_user = User(
+            username=username,
+            email=email,
+            is_verified=False
+        )
         new_user.set_password(password)
+
+        # Generate verification token
+        token = secrets.token_urlsafe(32)
+        new_user.verification_token = token
+        new_user.token_expiry = datetime.utcnow() + timedelta(hours=24)
+
         db.session.add(new_user)
         db.session.commit()
 
-        flash("Registration successful! You can now log in.", "success")
+        # Send verification email
+        send_verification_email(email, token)
+
+        flash("Registration successful! Please check your email to verify your account.", "success")
         return redirect(url_for("login.login"))
 
     return render_template("register.html")
+
+################################################################
+# Email verification helper - sends verification email to new users
+################################################################
+
+
+def send_verification_email(email, token):
+    verification_url = url_for(
+        'login.verify_email', token=token, _external=True)
+
+    msg = Message(
+        'Verify Your Account',
+        sender=current_app.config['MAIL_DEFAULT_SENDER'],
+        recipients=[email]
+    )
+
+    msg.body = f'''Please verify your account by clicking the following link:
+{verification_url}
+
+If you did not register for this account, please ignore this email.
+
+This link will expire in 24 hours.
+'''
+
+    msg.html = f'''
+<p>Please verify your account by clicking the following link:</p>
+<p><a href="{verification_url}">Verify Your Account</a></p>
+<p>If you did not register for this account, please ignore this email.</p>
+<p>This link will expire in 24 hours.</p>
+'''
+
+    mail.send(msg)
