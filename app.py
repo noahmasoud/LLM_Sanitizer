@@ -142,7 +142,7 @@ def check_and_update_user_schema():
 
         if 'is_verified' not in columns:
             cursor.execute(
-                "ALTER TABLE users ADD COLUMN is_verified BOOLEAN DEFAULT 0")
+                "ALTER TABLE users ADD COLUMN is_verified BOOLEAN DEFAULT 1")
             updates_made = True
             print("Added is_verified column to users table")
 
