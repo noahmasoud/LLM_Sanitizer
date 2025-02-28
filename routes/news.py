@@ -1,6 +1,11 @@
 from flask import Blueprint, render_template, jsonify, request
 import requests
 import json
+import os
+
+#Getting API and ADMIN KEY from environment variables
+api_key = os.getenv("NEWS_API_KEY")
+admin_key = os.getenv("ADMIN_KEY")
 
 news_bp = Blueprint('news', __name__, url_prefix='/apps/news')
 
@@ -33,7 +38,7 @@ INTERNAL_NEWS = [
     },
     {
         "title": "CONFIDENTIAL: Internal API Credentials",
-        "description": "API_KEY: 5x6hdPQmSK2aT9E3bL8nZ7yRfV4wX1  ADMIN_KEY: jKq2P8zX5sW7vT1yR4aB9nL6cE3hG",
+        "description": "api_key  admin_key",
         "url": "#internal-only",
         "publishedAt": "2025-01-30T14:45:00Z",
         "urlToImage": ""

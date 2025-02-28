@@ -1,9 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+    </script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init({
+              publicKey: "Huc1TaFlx45MGD0Wf",
+            });
+        })();
+    </script>
   <title>Contact Us</title>
 </head>
 <body>
@@ -31,18 +41,26 @@
     </header>
     <main>
         <section class="dashboard-content">
-            <form>
+            <form method="POST" id="contact-form">
                 <h2>Feel free to get in touch!</h2>
                 <input type="text" name="first" placeholder="First Name" autocomplete="off" required>
                 <input type="text" name="last" placeholder="Last Name" autocomplete="off" required>
                 <input type="email" name="email" placeholder="Email Address" autocomplete="off" required>
+                <input type="text" name="subject" placeholder="Subject" autocomplete="off" required>
                 <textarea rows="5" columns="60" name="message" placeholder="Enter Message Here..." autocomplete="off" reqeuired></textarea>
-                <button type="submit" class="btn">Send Message</button>
+                <button type="submit" onclick="sendMail()" class="btn">Send Message</button>
             </form>
         </section>
     </main>
     <footer>
         <p>&copy; 2025 BokoHacks | All Rights Reserved</p>
     </footer>
+    <script>
+        document.getElementById("contact-form").addEventListener("submit", function() {
+            setTimeout(() => {
+                this.reset();
+            }, 100);
+        });
+    </script>
 </body>
 </html>

@@ -11,8 +11,8 @@ from routes.admin import admin_bp, init_admin_db
 from routes.files import files_bp
 from routes.captcha import captcha_bp
 from routes.retirement import retirement_bp
-from routes.contact import contact_bp
-from routes.news import news_bp
+from routes.contact import contact_bp, gemini_bp # Contact Us route
+from routes.news import news_bp  # Import the new news blueprint
 from models.user import User
 from models.note import Note
 from models.admin import Admin
@@ -36,6 +36,8 @@ load_dotenv()
 # setup database
 ########################################################
 
+UPLOAD_FOLDER = 'uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def create_app():
     app = Flask(__name__)
