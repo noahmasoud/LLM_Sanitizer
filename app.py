@@ -11,7 +11,7 @@ from routes.admin import admin_bp, init_admin_db
 from routes.files import files_bp
 from routes.captcha import captcha_bp
 from routes.retirement import retirement_bp
-from routes.contact import contact_bp # Contact Us route
+from routes.contact import contact_bp, gemini_bp # Contact Us route
 from routes.news import news_bp  # Import the new news blueprint
 from models.user import User
 from models.note import Note
@@ -19,12 +19,21 @@ from models.admin import Admin
 from models.file import File  
 from sqlalchemy import inspect
 import os
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///boko_hacks.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+mail= Mail(app)
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = os.getenv("EMAIL_ADDRESS")
+app.config['MAIL_PASSWORD'] = os.getenv("EMAIL_PASSWORD")
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
 
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -45,6 +54,7 @@ app.register_blueprint(captcha_bp)
 app.register_blueprint(news_bp)
 app.register_blueprint(retirement_bp)  
 app.register_blueprint(contact_bp)  
+app.register_blueprint(gemini_bp)  
 
 def setup_database():
     """Setup database and print debug info"""
