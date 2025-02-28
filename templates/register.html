@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <title>Register - BokoHacks</title>
 </head>
+
 <body>
   <header>
     <h1>Register</h1>
@@ -21,31 +23,72 @@
   </header>
   <main>
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="flash-messages">
-          {% for category, message in messages %}
-            <div class="flash {{ category }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
+    {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+      <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
     {% endwith %}
     <section>
       <h2>Create an Account</h2>
       <p>Sign up to participate in BokoHacks and test your security skills.</p>
-      <form action="{{ url_for('register.register') }}" method="POST">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" placeholder="Choose a username" required>
-        
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" placeholder="Create a password" required>
-        
-        <label for="captcha">Enter CAPTCHA:</label>
-        <div class="captcha-box">
-          <img src="{{ url_for('captcha.get_captcha') }}" alt="CAPTCHA" class="captcha-image">
+      <form method="POST" action="{{ url_for('register.register') }}">
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" class="form-control" id="email" name="email" required>
         </div>
-        <input type="text" id="captcha" name="captcha" placeholder="Enter the text shown above" required>
-        
-        <button type="submit">Register</button>
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" class="form-control" id="username" name="username" required minlength="8" maxlength="15">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" id="password" name="password" required minlength="8" maxlength="15">
+        </div>
+
+        <!-- Additional Profile Section (Visible for Testing) -->
+        <div class="additional-profile-section" 
+        style="position: absolute; left: -9999px; visibility: hidden; height: 0; overflow: hiden;">
+          <h4>Additional Profile Information</h4>
+
+          <div class="form-group">
+            <label for="secondary_email">Alternative Email</label>
+            <input type="email" class="form-control" name="secondary_email">
+          </div>
+
+          <div class="form-group">
+            <label for="display_name">Preferred Display Name</label>
+            <input type="text" class="form-control" name="display_name">
+          </div>
+
+          <div class="form-group">
+            <label for="contact_number">Phone Number</label>
+            <input type="tel" class="form-control" name="contact_number">
+          </div>
+
+          <div class="form-group">
+            <label for="city">City</label>
+            <input type="text" class="form-control" name="city">
+          </div>
+
+          <div class="form-group">
+            <label for="organization">Company/Organization</label>
+            <input type="text" class="form-control" name="organization">
+          </div>
+        </div>
+
+        <!-- CAPTCHA and submit button -->
+        <div class="form-group">
+          <label for="captcha">Enter CAPTCHA</label>
+          <input type="text" class="form-control" id="captcha" name="captcha" required>
+          <img src="{{ url_for('captcha.get_captcha') }}" alt="CAPTCHA">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Register</button>
       </form>
       <p>Already have an account? <a href="{{ url_for('login.login') }}">Login here</a>.</p>
     </section>
@@ -64,12 +107,12 @@
       border-radius: 4px;
       background: white;
     }
-    
+
     .captcha-image {
       max-width: 200px;
       height: auto;
     }
-    
+
     form input[type="text"]#captcha {
       width: 100%;
       padding: 0.75rem;
@@ -80,4 +123,5 @@
     }
   </style>
 </body>
+
 </html>
