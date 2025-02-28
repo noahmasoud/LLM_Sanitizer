@@ -51,22 +51,35 @@ def get_admin_list():
 
 @admin_bp.route("/admin-check")
 def check_admin():
-    """Check admin login status - used for AJAX requests"""
+    """Check if the logged-in user is an admin before allowing access."""
+    
+    # ✅ Get session data
     is_admin = session.get('admin_logged_in', False)
-    if is_admin:
-        admins = get_admin_list()
-        
-        admin_roles = Admin.query.all()
-        admin_user_ids = [admin.user_id for admin in admin_roles]
-        
-        return jsonify({
-            'logged_in': True,
-            'is_default_admin': session.get('is_default_admin', False),
-            'admin_username': session.get('admin_username', 'admin'),
-            'admins': admins,
-            'admin_user_ids': admin_user_ids
-        })
-    return jsonify({'logged_in': False})
+    username = session.get('admin_username')  # Stored username during login
+
+    print("Checking admin status for:", username)  # Debugging info
+
+    # ❌ If session data is missing, deny access
+    if not is_admin or not username:
+        return jsonify({'logged_in': False})
+
+    # ✅ Fetch the user from the database securely
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({'logged_in': False})  # ❌ User not found
+
+    # ✅ Check if the user is an admin
+    admin_role = Admin.query.filter_by(user_id=user.id).first()
+    if not admin_role:
+        return jsonify({'logged_in': False})  # ❌ User is not an admin
+
+    # ✅ If the user is in the admin list, return success
+    return jsonify({
+        'logged_in': True,
+        'is_default_admin': admin_role.is_default,
+        'admin_username': username
+    })
+
 
 @admin_bp.route("/admin", methods=["GET", "POST"])
 def admin():
@@ -91,8 +104,8 @@ def admin():
                 })
         
         try:
-            query = f"SELECT * FROM users WHERE username = '{username}' AND password_hash = '{password}'"
-            result = db.session.execute(query)
+            query = "SELECT * FROM users WHERE username = :username AND password_hash = :password"
+            result = db.session.execute(query, {'username': username, 'password': password})  # ✅ Secure parameterized query
             user_data = result.fetchone()
             
             if user_data:
