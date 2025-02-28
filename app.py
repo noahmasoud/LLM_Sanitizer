@@ -111,7 +111,67 @@ def setup_database():
                 print(f"\n{table} table does not exist!")
 
 
+def check_and_update_user_schema():
+    """Check if all required columns exist in the users table and add them if missing"""
+    with app.app_context():
+        # Get existing columns
+        conn = db.engine.raw_connection()
+        cursor = conn.cursor()
+
+        # Check if users table exists
+        cursor.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='users'")
+        if not cursor.fetchone():
+            print("Users table doesn't exist yet, skipping schema update")
+            cursor.close()
+            return
+
+        cursor.execute("PRAGMA table_info(users)")
+        columns = [column[1] for column in cursor.fetchall()]
+
+        # Add missing columns
+        updates_made = False
+
+        if 'email' not in columns:
+            cursor.execute(
+                "ALTER TABLE users ADD COLUMN email VARCHAR(120) DEFAULT NULL")
+            updates_made = True
+            print("Added email column to users table")
+
+        if 'is_verified' not in columns:
+            cursor.execute(
+                "ALTER TABLE users ADD COLUMN is_verified BOOLEAN DEFAULT 0")
+            updates_made = True
+            print("Added is_verified column to users table")
+
+        if 'verification_token' not in columns:
+            cursor.execute(
+                "ALTER TABLE users ADD COLUMN verification_token VARCHAR(100) DEFAULT NULL")
+            updates_made = True
+            print("Added verification_token column to users table")
+
+        if 'token_expiry' not in columns:
+            cursor.execute(
+                "ALTER TABLE users ADD COLUMN token_expiry DATETIME DEFAULT NULL")
+            updates_made = True
+            print("Added token_expiry column to users table")
+
+        if 'created_at' not in columns:
+            cursor.execute("ALTER TABLE users ADD COLUMN created_at DATETIME")
+            updates_made = True
+            print("Added created_at column to users table")
+
+        if updates_made:
+            print("Database schema updated successfully")
+        else:
+            print("Database schema is already up to date")
+
+        conn.commit()
+        cursor.close()
+
+
 if __name__ == "__main__":
     app = create_app()
     setup_database()
+    check_and_update_user_schema()
     app.run(debug=True)
