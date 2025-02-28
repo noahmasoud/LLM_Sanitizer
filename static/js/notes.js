@@ -84,7 +84,7 @@ function saveNote() {
                     <div class="note-content">${note.content}</div>
                     <div class="note-meta">
                         ID: ${note.id} | Created: ${note.created_at}
-                        <button type="button" class="delete-note" data-note-id="${note.id}">Delete</button>
+                        <button type="button" class="delete-note delete-btn" data-note-id="${note.id}">Delete</button>
                     </div>
                 </div>
             `;
