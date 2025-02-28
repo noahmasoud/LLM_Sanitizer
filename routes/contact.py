@@ -74,7 +74,7 @@ def analyze_with_gemini(first_name, last_name, email, subject, message):
                 file.write(f"Email: {email}\n")
                 file.write(f"Subject: {subject}\n")
                 file.write(f"Message: {message}\n")
-                file.write(f"Gemini Response: {response}\n")
+                file.write(f"Gemini Response: {response_text}\n")
                 file.close()
 
         # ✅ Step 1: Remove Markdown formatting if present
