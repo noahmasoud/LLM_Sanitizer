@@ -6,9 +6,10 @@ from utils.captcha import generate_captcha
 
 captcha_bp = Blueprint("captcha", __name__)
 
-def generate_random_captcha(length=5):
-    """Generate a random alphanumeric CAPTCHA"""
-    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
+def generate_random_captcha(length=6):
+    """Generate a random CAPTCHA with uppercase letters, digits, and special characters"""
+    characters = string.ascii_uppercase + string.digits + "!@#$%^&*"
+    return ''.join(random.choices(characters, k=length))
 
 @captcha_bp.route("/captcha/generate", methods=["GET"])
 def get_captcha():

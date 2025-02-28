@@ -43,11 +43,30 @@
                     <span class="difficulty">Difficulty: Medium</span>
                 </div>
                 
-                <div class="app-card" data-app="admin">
+                
+                <div class="app-card" data-app="admin" id="admin-card">
                     <h3>Admin Portal</h3>
                     <p>Reserved for authorized personnel only.</p>
                     <span class="difficulty">Difficulty: Medium</span>
                 </div>
+                <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            fetch('/admin-check', { credentials: 'include' })  // ✅ Sends session cookies
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (!data.logged_in) {  
+                                        // ❌ If not an admin, remove the admin portal card
+                                        const adminCard = document.getElementById("admin-card");
+                                        if (adminCard) {
+                                            adminCard.remove();
+                                        }
+                                    }
+                                })
+                                .catch(error => console.error("Error checking admin status:", error));
+                        });
+
+                </script>
+                
                 
                 <div class="app-card" data-app="401k">
                     <h3>401(k) Portal</h3>
