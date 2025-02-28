@@ -61,7 +61,10 @@ def upload_file():
         print("No file part in request")
         return jsonify({'success': False, 'error': 'No file part'}), 400
     
-    if file:  
+    #Checking to see if the file is allowed or not, this was a vulnerability
+    isFileAllowed = allowed_file(file.filename)
+    
+    if isFileAllowed:
         filename = secure_filename(file.filename)
         file_path = os.path.join(UPLOAD_FOLDER, filename)
         print(f"File path: {file_path}")
