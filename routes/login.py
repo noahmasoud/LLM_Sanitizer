@@ -8,7 +8,9 @@ from flask_mail import Message
 login_bp = Blueprint("login", __name__)
 
 ################################################################
-# Login route - handles user authentication
+# login route handles user authentication
+# uses username and password to login
+# finds the user by username
 ################################################################
 
 
@@ -23,7 +25,6 @@ def login():
         print(f"Username: {username}")
         print(f"Password provided: {password}")
 
-        # Find user by username instead of email
         user = User.query.filter_by(username=username).first()
         print(f"User found: {user is not None}")
 
@@ -55,7 +56,7 @@ def login():
     return render_template("login.html")
 
 ################################################################
-# Logout route - clears user session
+# logout route taht clears user session
 ################################################################
 
 
@@ -66,9 +67,11 @@ def logout():
     flash("You have been logged out.", "info")
     return redirect(url_for("login.login"))
 
-###########################################################################################
-# Registration route - handles new user signup with honeypot and email verification
-###########################################################################################
+################################################################
+# registration route handles new user signup with honeypot and email verification
+# has a honeypot to prevent bots from registering
+# gets form data
+################################################################
 
 
 @login_bp.route('/register', methods=['GET', 'POST'])
@@ -141,7 +144,7 @@ def register():
     return render_template('register.html')
 
 ################################################################
-# Email verification helper - sends verification email to new users
+# email verification helper sends verification email to new users
 ################################################################
 
 
@@ -173,7 +176,7 @@ This link will expire in 24 hours.
     mail.send(msg)
 
 ################################################################
-# Email verification route - processes verification links from emails
+# email verification route processes verification links from emails
 ################################################################
 
 
