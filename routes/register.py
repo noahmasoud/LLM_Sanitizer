@@ -19,7 +19,7 @@ class AdditionalField:
 
     def check_value(self, value):
         """Check if optional field was filled and update status"""
-        if value and value.strip():  # Only mark as filled if value contains non-whitespace characters
+        if value and value.strip():  # mark as filled if value contains non-whitespace characters
             self.is_empty = False
         return self.is_empty
 
@@ -80,7 +80,8 @@ def register():
         ################################################################
 
         if validate_profile_data(form_data):
-            # Silently redirect to home
+            flash("Unusual behavior detected. Registration denied.",
+                  category="danger")
             return redirect(url_for("home.home"))
 
         username = request.form.get("username")
